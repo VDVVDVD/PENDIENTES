@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ficha de Pendientes</title>
+    <link href="vendor/bootstrap.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <main class="container-fluid py-3 py-md-4">
+        <div class="row g-3">
+            <section class="col-12 col-lg-9" aria-label="Ficha de pendientes">
+                <div id="ficha">
+                    <table class="table table-bordered ficha-cabecera mb-0">
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="label-cell">
+                                    <label for="fecha">Fecha</label>
+                                </th>
+                                <td class="celda-cabecera">
+                                    <div class="fecha-contenedor">
+                                        <input
+                                            type="text"
+                                            id="fechaVisible"
+                                            class="form-control ficha-input fecha-display"
+                                            aria-hidden="true"
+                                            tabindex="-1"
+                                            readonly>
+                                            <input
+                                                type="date"
+                                                id="fecha"
+                                                class="form-control fecha-picker"
+                                                aria-label="Fecha">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="label-cell">
+                                    <label for="site">Site</label>
+                                </th>
+                                <td class="celda-cabecera">
+                                    <input
+                                        type="text"
+                                        id="site"
+                                        class="form-control ficha-input"
+                                        aria-label="Site">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h1 class="titulo mb-0">PENDIENTES</h1>
+
+                    <table class="table table-bordered tabla-pendientes mb-0" id="tablaPendientes">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="col-numero">N°</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col" class="col-completado">Completado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="numero">1</td>
+                                <td
+                                    class="descripcion"
+                                    contenteditable="true"
+                                    role="textbox"
+                                    aria-label="Descripción del pendiente 1"
+                                    spellcheck="true"></td>
+                                <td class="celda-checkbox">
+                                    <input type="checkbox" aria-label="Pendiente 1 completado">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <aside class="col-12 col-lg-3 d-flex flex-column gap-2" aria-label="Acciones">
+                <button type="button" class="btn btn-primary py-3" id="capturarFicha">
+                    Capturar ficha
+                </button>
+                <button type="button" class="btn btn-success py-3" id="enviarWhatsApp">
+                    Copiar captura y abrir grupo
+                </button>
+                <small class="text-muted">
+                    La captura se copia y descarga. En WhatsApp, haz clic en el chat, presiona Ctrl+V y luego Enviar.
+                </small>
+                <button type="button" class="btn btn-secondary py-3" id="abrirModalPendiente">
+                    INSERTAR N°
+                </button>
+                <button type="button" class="btn btn-outline-secondary py-3" id="limpiarFicha">
+                    LIMPIAR
+                </button>
+            </aside>
+        </div>
+    </main>
+
+    <div class="modal fade" id="modalPendiente" tabindex="-1" aria-labelledby="modalPendienteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="formPendiente">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5" id="modalPendienteLabel">Nuevo pendiente</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="descripcionNueva" class="form-label">Descripción</label>
+                        <textarea
+                            id="descripcionNueva"
+                            class="form-control"
+                            rows="3"
+                            required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-danger alert-dismissible fade show d-none" id="mensajeError" role="alert">
+        <span id="textoError"></span>
+        <button type="button" class="btn-close" aria-label="Cerrar" id="cerrarError"></button>
+    </div>
+
+    <script src="vendor/bootstrap.bundle.min.js"></script>
+    <script src="vendor/html2canvas.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
