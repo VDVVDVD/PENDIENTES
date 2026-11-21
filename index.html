@@ -2,247 +2,588 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#DDEFF4">
     <title>Ficha de Pendientes</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css">
+
     <style>
+:root {
+    --cielo: #CFE6F5;
+    --cielo-suave: #E6F2FA;
+    --menta: #CDEBDD;
+    --menta-suave: #E4F4EB;
+    --azul-profundo: #2C6E9B;
+    --verde-profundo: #1F7A5A;
+    --tinta: #1F3A46;
+    --tinta-suave: #4C6B77;
+    --papel: #FBFEFD;
+    --fuente-titulo: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+    --fuente-texto: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
 body {
-    background: #f3f3f3;
-}
-
-#ficha {
-    width: 100%;
-    background: #fff;
-}
-
-.ficha-cabecera,
-.tabla-pendientes {
-    border-color: #000;
-    color: #000;
-}
-
-.ficha-cabecera th,
-.ficha-cabecera td,
-.tabla-pendientes th,
-.tabla-pendientes td {
-    border: 1px solid #000 !important;
-}
-
-.ficha-cabecera .label-cell {
-    width: 120px;
-    background-color: #ffeb3b !important;
-    font-size: clamp(1.1rem, 3vw, 2rem);
-    font-weight: 700;
-    text-align: center;
-    vertical-align: middle;
-}
-
-.ficha-cabecera .label-cell label {
+    min-height: 100vh;
     margin: 0;
+    padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(160deg, #E3F0F9 0%, #E4F5EC 100%) fixed;
+    color: var(--tinta);
+    font-family: var(--fuente-texto);
 }
 
-.celda-cabecera {
-    text-align: center;
-    vertical-align: middle;
+:focus-visible {
+    outline: 3px solid var(--azul-profundo);
+    outline-offset: 2px;
 }
 
-.ficha-input {
-    min-height: 3rem;
-    border: 0;
-    border-radius: 0;
-    color: #000;
-    text-align: center;
+.contenedor {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 20px 14px;
 }
 
-.ficha-input:focus {
-    box-shadow: inset 0 0 0 2px #0d6efd;
+/* ---------- Ficha (lo que se captura) ---------- */
+.captura {
+    padding: 18px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #D2E8F6 0%, #D1EFE1 100%);
 }
 
-.fecha-contenedor {
+.ficha {
+    overflow: hidden;
+    border-radius: 22px;
+    background: var(--papel);
+    box-shadow: 0 8px 24px rgba(31, 58, 70, 0.12);
+}
+
+.cabecera {
+    padding: 22px 20px 18px;
+    background: linear-gradient(120deg, var(--cielo) 0%, var(--menta) 100%);
+}
+
+.cabecera-fila {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.titulo {
+    margin: 0;
+    font-family: var(--fuente-titulo);
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+}
+
+.estado {
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.75);
+    font-size: 0.92rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.tile {
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.78);
+}
+
+.tile-fecha {
     position: relative;
-    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 18px 10px 16px;
+    cursor: pointer;
 }
 
-.fecha-display {
-    height: 100%;
+.tile-fecha:focus-within,
+.tile-site:focus-within {
+    box-shadow: 0 0 0 3px var(--azul-profundo);
+}
+
+.dia-numero {
+    font-family: var(--fuente-titulo);
+    font-size: 2.7rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.dia-texto {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
+.dia-semana {
+    font-weight: 700;
+}
+
+.dia-mes {
+    color: var(--tinta-suave);
+    font-size: 0.92rem;
+    font-weight: 600;
 }
 
 .fecha-picker {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     opacity: 0;
     cursor: pointer;
 }
 
-.fecha-contenedor:focus-within .fecha-display {
-    box-shadow: inset 0 0 0 2px #0d6efd;
+.tile-site {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    padding: 8px 18px;
 }
 
-.titulo {
-    padding: 0.5rem;
-    background: #79c753;
-    color: #000;
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
+.tile-site label {
+    color: var(--tinta-suave);
+    font-size: 0.85rem;
     font-weight: 700;
-    text-align: center;
 }
 
-.tabla-pendientes {
-    table-layout: fixed;
+.tile-site input {
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--tinta);
+    font-family: var(--fuente-titulo);
+    font-size: 1.3rem;
+    font-weight: 600;
 }
 
-.tabla-pendientes thead th {
-    background-color: #ffeb3b !important;
-    font-weight: 700;
-    text-align: center;
+.tile-site input:focus,
+.tile-site input:focus-visible {
+    outline: none;
 }
 
-.tabla-pendientes .col-numero,
-.tabla-pendientes .numero {
-    width: 90px;
-    text-align: center;
+.barra {
+    height: 8px;
+    margin-top: 16px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.65);
 }
 
-.tabla-pendientes .col-completado,
-.tabla-pendientes .celda-checkbox {
-    width: 120px;
-    text-align: center;
+.barra-relleno {
+    width: 0;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--verde-profundo);
+    transition: width 0.35s ease;
 }
 
-.tabla-pendientes .numero,
-.tabla-pendientes .descripcion,
-.tabla-pendientes .celda-checkbox {
-    min-height: 2.75rem;
-    vertical-align: middle;
+/* ---------- Lista ---------- */
+.lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
 }
 
-.tabla-pendientes .descripcion {
+.pendiente {
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 14px 10px 10px;
+    border-radius: 16px;
+    background: var(--cielo-suave);
+    transition: background-color 0.2s ease;
+}
+
+.pendiente:nth-child(even) {
+    background: var(--menta-suave);
+}
+
+.pendiente:focus-within {
+    box-shadow: 0 0 0 2px var(--azul-profundo);
+}
+
+.numero {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #FFFFFF;
+    font-family: var(--fuente-titulo);
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.descripcion {
+    min-height: 1.6rem;
+    padding: 0.2rem 0;
+    font-size: 1.02rem;
+    font-weight: 600;
+    line-height: 1.4;
     overflow-wrap: anywhere;
     white-space: pre-wrap;
 }
 
-.tabla-pendientes .descripcion:focus {
-    outline: 2px solid #0d6efd;
-    outline-offset: -2px;
+.descripcion:focus,
+.descripcion:focus-visible {
+    outline: none;
 }
 
-.tabla-pendientes input[type="checkbox"] {
-    width: 1.15rem;
-    height: 1.15rem;
-    vertical-align: middle;
+.descripcion:empty::before {
+    content: attr(data-ph);
+    color: #6B8793;
+    font-weight: 400;
+}
+
+.descripcion:empty:focus::before {
+    content: "";
+}
+
+.capturando .descripcion:empty::before {
+    content: "";
+}
+
+.pendiente input[type="checkbox"] {
+    width: 1.6rem;
+    height: 1.6rem;
+    margin: 0 4px 0 0;
+    accent-color: var(--verde-profundo);
+    cursor: pointer;
+}
+
+.pendiente.hecho {
+    background: #C6EAD6;
+}
+
+.pendiente.hecho .descripcion {
+    color: var(--tinta-suave);
+    text-decoration: line-through;
+}
+
+.pendiente.hecho .numero {
+    background: var(--verde-profundo);
+    color: #FFFFFF;
+}
+
+/* ---------- Acciones ---------- */
+.acciones {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    position: fixed;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    left: 12px;
+    z-index: 1020;
+    padding: 8px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 10px 30px rgba(31, 58, 70, 0.2);
+}
+
+.accion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 0.55rem 0.2rem;
+    border: 0;
+    border-radius: 16px;
+    background: var(--cielo-suave);
+    color: var(--tinta);
+    font-family: var(--fuente-texto);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.15;
+    text-align: center;
+    transition: transform 0.12s ease, background-color 0.2s ease;
+}
+
+.accion:active {
+    transform: translateY(1px);
+}
+
+.accion:disabled {
+    opacity: 0.6;
+}
+
+.accion svg {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.accion--agregar {
+    background: var(--azul-profundo);
+    color: #FFFFFF;
+}
+
+.accion--whatsapp {
+    background: var(--verde-profundo);
+    color: #FFFFFF;
+}
+
+.accion--guardar {
+    background: var(--menta);
+}
+
+.accion--limpiar {
+    background: transparent;
+    box-shadow: inset 0 0 0 2px rgba(31, 58, 70, 0.18);
+}
+
+.ayuda-envio {
+    display: none;
+    margin: 4px 6px 0;
+    color: var(--tinta-suave);
+    font-size: 0.86rem;
+    line-height: 1.4;
+}
+
+@media (min-width: 992px) {
+    body {
+        padding-bottom: 0;
+    }
+
+    .contenedor {
+        padding: 40px 20px;
+    }
+
+    .acciones {
+        position: sticky;
+        top: 24px;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .accion {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 12px;
+        padding: 0.9rem 1.1rem;
+        font-size: 1rem;
+        text-align: left;
+        box-shadow: 0 2px 8px rgba(31, 58, 70, 0.08);
+    }
+
+    .accion--limpiar {
+        box-shadow: inset 0 0 0 2px rgba(31, 58, 70, 0.18);
+    }
+
+    .ayuda-envio {
+        display: block;
+    }
+}
+
+@media (max-width: 420px) {
+    .captura {
+        padding: 12px;
+    }
+
+    .cabecera {
+        padding: 18px 14px 16px;
+    }
+
+    .meta {
+        grid-template-columns: 1fr;
+    }
+
+    .lista {
+        padding: 10px;
+    }
+}
+
+/* ---------- Modales y errores ---------- */
+.modal-content {
+    border: 0;
+    border-radius: 26px;
+    background: var(--papel);
+    color: var(--tinta);
+    font-family: var(--fuente-texto);
+}
+
+.modal-header,
+.modal-footer {
+    border: 0;
+}
+
+.modal-title {
+    font-family: var(--fuente-titulo);
+    font-weight: 800;
+}
+
+.modal .form-control {
+    padding: 0.7rem 0.95rem;
+    border: 2px solid var(--cielo);
+    border-radius: 14px;
+    background: #FFFFFF;
+}
+
+.modal .form-control:focus {
+    border-color: var(--azul-profundo);
+    box-shadow: none;
+}
+
+.modal .btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.modal .btn-primary {
+    border-color: var(--azul-profundo);
+    background: var(--azul-profundo);
+}
+
+.modal .btn-success {
+    border-color: var(--verde-profundo);
+    background: var(--verde-profundo);
+}
+
+.modal .btn-outline-secondary {
+    border-color: rgba(31, 58, 70, 0.25);
+    color: var(--tinta);
+}
+
+.modal .btn-outline-secondary:hover {
+    background: var(--cielo-suave);
+    color: var(--tinta);
 }
 
 #mensajeError {
     position: fixed;
-    right: 1rem;
-    bottom: 1rem;
-    left: 1rem;
+    right: 14px;
+    bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+    left: 14px;
     z-index: 1080;
-    margin-bottom: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 16px;
+    background: #FFE3DC;
+    color: #7A2E20;
+    font-weight: 600;
 }
 
-@media (max-width: 575.98px) {
-    .tabla-pendientes .col-numero,
-    .tabla-pendientes .numero {
-        width: 52px;
+@media (min-width: 992px) {
+    #mensajeError {
+        right: 24px;
+        bottom: 24px;
+        left: auto;
+        max-width: 460px;
     }
+}
 
-    .tabla-pendientes .col-completado,
-    .tabla-pendientes .celda-checkbox {
-        width: 96px;
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
     }
 }
     </style>
 </head>
 <body>
-    <main class="container-fluid py-3 py-md-4">
-        <div class="row g-3">
-            <section class="col-12 col-lg-9" aria-label="Ficha de pendientes">
-                <div id="ficha">
-                    <table class="table table-bordered ficha-cabecera mb-0">
-                        <tbody>
-                            <tr>
-                                <th scope="row" class="label-cell">
-                                    <label for="fecha">Fecha</label>
-                                </th>
-                                <td class="celda-cabecera">
-                                    <div class="fecha-contenedor">
-                                        <input
-                                            type="text"
-                                            id="fechaVisible"
-                                            class="form-control ficha-input fecha-display"
-                                            aria-hidden="true"
-                                            tabindex="-1"
-                                            readonly>
-                                        <input
-                                            type="date"
-                                            id="fecha"
-                                            class="form-control fecha-picker"
-                                            aria-label="Fecha">
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="label-cell">
+    <main class="contenedor">
+        <div class="row g-4">
+            <section class="col-12 col-lg-8" aria-label="Ficha de pendientes">
+                <div class="captura" id="capturaFicha">
+                    <div class="ficha" id="ficha">
+                        <header class="cabecera">
+                            <div class="cabecera-fila">
+                                <h1 class="titulo">Pendientes del día</h1>
+                                <span class="estado" id="estadoProgreso">0 de 1 listos</span>
+                            </div>
+
+                            <div class="meta">
+                                <div class="tile tile-fecha">
+                                    <span class="dia-numero" id="diaNumero">--</span>
+                                    <span class="dia-texto">
+                                        <span class="dia-semana" id="diaSemana"></span>
+                                        <span class="dia-mes" id="diaMes"></span>
+                                    </span>
+                                    <input type="date" id="fecha" class="fecha-picker" aria-label="Cambiar fecha">
+                                </div>
+
+                                <div class="tile tile-site">
                                     <label for="site">Site</label>
-                                </th>
-                                <td class="celda-cabecera">
-                                    <input
-                                        type="text"
-                                        id="site"
-                                        class="form-control ficha-input"
-                                        aria-label="Site">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    <input type="text" id="site" autocomplete="off">
+                                </div>
+                            </div>
 
-                    <h1 class="titulo mb-0">PENDIENTES</h1>
+                            <div class="barra" aria-hidden="true">
+                                <div class="barra-relleno" id="barraProgreso"></div>
+                            </div>
+                        </header>
 
-                    <table class="table table-bordered tabla-pendientes mb-0" id="tablaPendientes">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="col-numero">N°</th>
-                                <th scope="col">Descripción</th>
-                                <th scope="col" class="col-completado">Completado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="numero">1</td>
-                                <td
+                        <div class="lista" id="listaPendientes" role="list">
+                            <div class="pendiente" role="listitem">
+                                <span class="numero">1</span>
+                                <div
                                     class="descripcion"
                                     contenteditable="true"
                                     role="textbox"
                                     aria-label="Descripción del pendiente 1"
-                                    spellcheck="true"></td>
-                                <td class="celda-checkbox">
-                                    <input type="checkbox" aria-label="Pendiente 1 completado">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    data-ph="Escribe el pendiente"
+                                    spellcheck="true"></div>
+                                <input type="checkbox" aria-label="Pendiente 1 completado">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <aside class="col-12 col-lg-3 d-flex flex-column gap-2" aria-label="Acciones">
-                <button type="button" class="btn btn-primary py-3" id="capturarFicha">
-                    Capturar ficha
-                </button>
-                <button type="button" class="btn btn-success py-3" id="enviarWhatsApp">
-                    Enviar por WhatsApp
-                </button>
-                <small class="text-muted">
-                    En celular se abre el menú de compartir con la imagen adjunta. En PC se copia la captura y se abre el chat (Ctrl+V y Enviar).
-                </small>
-                <button type="button" class="btn btn-secondary py-3" id="abrirModalPendiente">
-                    INSERTAR N°
-                </button>
-                <button type="button" class="btn btn-outline-secondary py-3" id="limpiarFicha">
-                    LIMPIAR
-                </button>
+            <aside class="col-12 col-lg-4" aria-label="Acciones">
+                <div class="acciones">
+                    <button type="button" class="accion accion--agregar" id="abrirModalPendiente">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                        <span>Agregar pendiente</span>
+                    </button>
+                    <button type="button" class="accion accion--whatsapp" id="enviarWhatsApp">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+                        <span>Enviar por WhatsApp</span>
+                    </button>
+                    <button type="button" class="accion accion--guardar" id="capturarFicha">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>
+                        <span>Guardar imagen</span>
+                    </button>
+                    <button type="button" class="accion accion--limpiar" id="limpiarFicha">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+                        <span>Limpiar</span>
+                    </button>
+                    <p class="ayuda-envio" id="ayudaEnvio"></p>
+                </div>
             </aside>
         </div>
     </main>
@@ -307,7 +648,7 @@ body {
         </div>
     </div>
 
-    <div class="alert alert-danger alert-dismissible fade show d-none" id="mensajeError" role="alert">
+    <div class="alert alert-dismissible fade show d-none" id="mensajeError" role="alert">
         <span id="textoError"></span>
         <button type="button" class="btn-close" aria-label="Cerrar" id="cerrarError"></button>
     </div>
@@ -319,9 +660,13 @@ body {
 
 document.addEventListener("DOMContentLoaded", () => {
     const fechaInput = document.getElementById("fecha");
-    const fechaVisible = document.getElementById("fechaVisible");
+    const diaNumero = document.getElementById("diaNumero");
+    const diaSemana = document.getElementById("diaSemana");
+    const diaMes = document.getElementById("diaMes");
     const siteInput = document.getElementById("site");
-    const tbody = document.querySelector("#tablaPendientes tbody");
+    const lista = document.getElementById("listaPendientes");
+    const estadoProgreso = document.getElementById("estadoProgreso");
+    const barraProgreso = document.getElementById("barraProgreso");
     const modalElement = document.getElementById("modalPendiente");
     const modalPendiente = new bootstrap.Modal(modalElement);
     const formulario = document.getElementById("formPendiente");
@@ -330,6 +675,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const textoError = document.getElementById("textoError");
     const botonCapturar = document.getElementById("capturarFicha");
     const botonWhatsApp = document.getElementById("enviarWhatsApp");
+    const ayudaEnvio = document.getElementById("ayudaEnvio");
 
     // --- WhatsApp ---
     const modalWhatsAppEl = document.getElementById("modalWhatsApp");
@@ -361,6 +707,10 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const modoCompartir = puedeCompartirArchivos();
 
+    ayudaEnvio.textContent = modoCompartir
+        ? "Se abre el menú de compartir: elige WhatsApp y el chat."
+        : "Se copia la imagen y se abre el chat. Haz clic en el mensaje, pega con Ctrl+V y envía.";
+
     // --- Utilidades ---
     const fechaLocal = () => {
         const hoy = new Date();
@@ -369,11 +719,20 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${hoy.getFullYear()}-${mes}-${dia}`;
     };
 
+    const mayuscula = (texto) => texto.charAt(0).toUpperCase() + texto.slice(1);
+
     const actualizarFechaVisible = () => {
-        const partes = fechaInput.value.split("-");
-        fechaVisible.value = partes.length === 3
-            ? `${partes[2]}-${partes[1]}-${partes[0]}`
-            : "";
+        const partes = fechaInput.value.split("-").map(Number);
+        if (partes.length !== 3 || partes.some(Number.isNaN)) {
+            diaNumero.textContent = "--";
+            diaSemana.textContent = "";
+            diaMes.textContent = "";
+            return;
+        }
+        const fecha = new Date(partes[0], partes[1] - 1, partes[2]);
+        diaNumero.textContent = String(fecha.getDate());
+        diaSemana.textContent = mayuscula(fecha.toLocaleDateString("es", { weekday: "long" }));
+        diaMes.textContent = mayuscula(fecha.toLocaleDateString("es", { month: "long", year: "numeric" }));
     };
 
     const mostrarError = (mensaje) => {
@@ -385,36 +744,44 @@ document.addEventListener("DOMContentLoaded", () => {
         mensajeError.classList.add("d-none");
     };
 
+    const actualizarProgreso = () => {
+        const filas = lista.querySelectorAll(".pendiente");
+        const hechos = lista.querySelectorAll('input[type="checkbox"]:checked').length;
+        estadoProgreso.textContent = `${hechos} de ${filas.length} listos`;
+        barraProgreso.style.width = filas.length ? `${(hechos / filas.length) * 100}%` : "0";
+    };
+
     const siguienteNumero = () => {
-        const numeros = Array.from(tbody.querySelectorAll(".numero"))
+        const numeros = Array.from(lista.querySelectorAll(".numero"))
             .map((celda) => Number.parseInt(celda.textContent, 10))
             .filter((numero) => Number.isInteger(numero) && numero > 0);
         return Math.max(0, ...numeros) + 1;
     };
 
     const crearFila = (numero, descripcion) => {
-        const fila = document.createElement("tr");
-        const celdaNumero = document.createElement("td");
-        const celdaDescripcion = document.createElement("td");
-        const celdaCheckbox = document.createElement("td");
+        const fila = document.createElement("div");
+        const etiquetaNumero = document.createElement("span");
+        const texto = document.createElement("div");
         const checkbox = document.createElement("input");
 
-        celdaNumero.className = "numero";
-        celdaNumero.textContent = String(numero);
+        fila.className = "pendiente";
+        fila.setAttribute("role", "listitem");
 
-        celdaDescripcion.className = "descripcion";
-        celdaDescripcion.contentEditable = "true";
-        celdaDescripcion.setAttribute("role", "textbox");
-        celdaDescripcion.setAttribute("aria-label", `Descripción del pendiente ${numero}`);
-        celdaDescripcion.spellcheck = true;
-        celdaDescripcion.textContent = descripcion;
+        etiquetaNumero.className = "numero";
+        etiquetaNumero.textContent = String(numero);
 
-        celdaCheckbox.className = "celda-checkbox";
+        texto.className = "descripcion";
+        texto.contentEditable = "true";
+        texto.setAttribute("role", "textbox");
+        texto.setAttribute("aria-label", `Descripción del pendiente ${numero}`);
+        texto.dataset.ph = "Escribe el pendiente";
+        texto.spellcheck = true;
+        texto.textContent = descripcion;
+
         checkbox.type = "checkbox";
         checkbox.setAttribute("aria-label", `Pendiente ${numero} completado`);
-        celdaCheckbox.appendChild(checkbox);
 
-        fila.append(celdaNumero, celdaDescripcion, celdaCheckbox);
+        fila.append(etiquetaNumero, texto, checkbox);
         return fila;
     };
 
@@ -434,6 +801,19 @@ document.addEventListener("DOMContentLoaded", () => {
     actualizarFechaVisible();
     fechaInput.addEventListener("input", actualizarFechaVisible);
     fechaInput.addEventListener("change", actualizarFechaVisible);
+    fechaInput.addEventListener("click", () => {
+        try {
+            fechaInput.showPicker();
+        } catch (_) {}
+    });
+
+    // --- Marcar como listo ---
+    lista.addEventListener("change", (evento) => {
+        const control = evento.target;
+        if (!(control instanceof HTMLInputElement) || control.type !== "checkbox") return;
+        control.closest(".pendiente").classList.toggle("hecho", control.checked);
+        actualizarProgreso();
+    });
 
     // --- Agregar pendiente ---
     document.getElementById("abrirModalPendiente").addEventListener("click", () => {
@@ -451,23 +831,26 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        tbody.appendChild(crearFila(siguienteNumero(), descripcion));
+        lista.appendChild(crearFila(siguienteNumero(), descripcion));
+        actualizarProgreso();
         modalPendiente.hide();
         formulario.reset();
     });
 
     // --- Limpiar ---
     document.getElementById("limpiarFicha").addEventListener("click", () => {
-        while (tbody.rows.length > 1) {
-            tbody.deleteRow(1);
+        while (lista.children.length > 1) {
+            lista.lastElementChild.remove();
         }
 
-        const primeraFila = tbody.rows[0];
+        const primeraFila = lista.firstElementChild;
         primeraFila.querySelector(".descripcion").textContent = "";
         primeraFila.querySelector('input[type="checkbox"]').checked = false;
+        primeraFila.classList.remove("hecho");
         siteInput.value = "";
         fechaInput.value = fechaLocal();
         actualizarFechaVisible();
+        actualizarProgreso();
         ocultarError();
     });
 
@@ -480,9 +863,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error("No se pudo cargar html2canvas. Verifica tu conexión a Internet y vuelve a intentarlo.");
             }
 
-            const canvas = await window.html2canvas(document.getElementById("ficha"), {
+            if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+            }
+
+            const canvas = await window.html2canvas(document.getElementById("capturaFicha"), {
                 backgroundColor: "#ffffff",
-                scale: Math.min(window.devicePixelRatio || 1, 2)
+                scale: Math.min(window.devicePixelRatio || 1, 2),
+                onclone: (documentoClonado) => {
+                    const raiz = documentoClonado.getElementById("capturaFicha");
+                    if (raiz) raiz.classList.add("capturando");
+                }
             });
 
             const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
@@ -618,6 +1009,8 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = url;
         }
     });
+
+    actualizarProgreso();
 });
     </script>
 </body>
