@@ -94,9 +94,9 @@ body {
 
 .meta {
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 12px;
-    margin-top: 18px;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 20px;
 }
 
 .tile {
@@ -108,8 +108,9 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 18px 10px 16px;
+    gap: 16px;
+    min-height: 88px;
+    padding: 14px 24px 14px 20px;
     cursor: pointer;
 }
 
@@ -156,23 +157,25 @@ body {
     flex-direction: column;
     justify-content: center;
     min-width: 0;
-    padding: 8px 18px;
+    min-height: 88px;
+    padding: 12px 24px;
 }
 
 .tile-site label {
     color: var(--tinta-suave);
-    font-size: 0.85rem;
+    font-size: 1rem;
     font-weight: 700;
 }
 
 .tile-site input {
     width: 100%;
-    padding: 0;
+    min-height: 40px;
+    padding: 4px 0 0;
     border: 0;
     background: transparent;
     color: var(--tinta);
     font-family: var(--fuente-titulo);
-    font-size: 1.3rem;
+    font-size: 1.45rem;
     font-weight: 600;
 }
 
@@ -305,7 +308,8 @@ body {
 }
 
 .capturando .meta {
-    grid-template-columns: 210px 1fr;
+    grid-template-columns: 1fr;
+    gap: 14px;
 }
 
 .capturando .descripcion {
@@ -456,11 +460,26 @@ body {
     }
 
     .cabecera {
-        padding: 18px 14px 16px;
+        padding: 22px 18px 20px;
     }
 
     .meta {
         grid-template-columns: 1fr;
+        gap: 14px;
+        margin-top: 20px;
+    }
+
+    .tile-fecha,
+    .tile-site {
+        min-height: 92px;
+    }
+
+    .tile-fecha {
+        padding: 16px 20px;
+    }
+
+    .tile-site {
+        padding: 14px 20px;
     }
 
     .lista {
